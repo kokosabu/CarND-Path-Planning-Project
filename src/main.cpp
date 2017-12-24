@@ -243,23 +243,33 @@ int main() {
             int prev_size = previous_path_x.size();
 
           	json msgJson;
-#if 0
-          	vector<double> next_x_vals;
-          	vector<double> next_y_vals;
 
-
-          	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
-            double dist_inc = 0.5;
-            for(int i = 0; i < 50; i++)
+            if(prev_size > 0)
             {
-                double next_s = car_s + (i+1)*dist_inc;
-                double next_d = 6;
-                vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-
-                next_x_vals.push_back(xy[0]);
-                next_y_vals.push_back(xy[1]);
+                car_s = end_path_s;
             }
-#endif
+
+            bool too_close = false;
+
+            for(int i = 0; i < sensor_fusion.size(); i++)
+            {
+                float d = sensor_fusion[i][6];
+                if(d < (2+4*lane+2) && d > (2+4*lane-2))
+                {
+                    double vx = sensor_fusion[i][3];
+                    double vy = sensor_fusion[i][4];
+                    double check_speed = sqrt(vx*vx + vy*vy);
+                    double check_car_s = sensor_fusion[i][5];
+
+                    check_car_s += ((double)prev_size * .02 * check_speed);
+
+                    if(check_car_s > car_s && (check_car_s-car_s) < 30)
+                    {
+                        ref_val = 29.5;
+                    }
+                }
+            }
+
 
             vector<double> ptsx;
             vector<double> ptsy;
