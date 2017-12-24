@@ -14,6 +14,8 @@ using namespace std;
 
 // for convenience
 using json = nlohmann::json;
+int lane = 1;
+double ref_val = 0.0;
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
@@ -208,8 +210,6 @@ int main() {
     // The 2 signifies a websocket event
     //auto sdata = string(data).substr(0, length);
     //cout << sdata << endl;
-    int lane = 1;
-    double ref_val = 49.5;
     if (length && length > 2 && data[0] == '4' && data[1] == '2') {
 
       auto s = hasData(data);
@@ -265,11 +265,23 @@ int main() {
 
                     if(check_car_s > car_s && (check_car_s-car_s) < 30)
                     {
-                        ref_val = 29.5;
+                        too_close = true;
+                        if(lane > 0)
+                        {
+                            lane = 0;
+                        }
                     }
                 }
             }
 
+            if(too_close)
+            {
+                ref_val -= .224;
+            }
+            else if(ref_val < 49.5)
+            {
+                ref_val += .224;
+            }
 
             vector<double> ptsx;
             vector<double> ptsy;
