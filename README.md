@@ -1,5 +1,23 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
+
+## Reflection
+
+I followed the Project Walkthrough and Q&A video.
+Based on latest car position taken from either,
+previously generated path or current car position,
+and 3 points in front of the car (at 30, 60, 90 meters distance); and also,
+I used the spline library model generated trajectory.
+To avoid jerks, point coordinates for next 30 meters were generated with respect to desired velocity.
+In addition, when generating the trajectory,
+I confirmed forward and backward not only in front of the lane of the car but also in all lanes.
+
+*the description below is Udacity's original README for the project repo*
+
+---
+
+# CarND-Path-Planning-Project
+Self-Driving Car Engineer Nanodegree Program
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
