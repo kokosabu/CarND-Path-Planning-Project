@@ -14,7 +14,7 @@ using namespace std;
 
 // for convenience
 using json = nlohmann::json;
-int lane = 1;
+
 double ref_val = 0.0;
 
 // For converting back and forth between radians and degrees.
@@ -244,12 +244,18 @@ int main() {
 
           	json msgJson;
 
-            if(prev_size > 0)
-            {
+            if (prev_size > 0) {
                 car_s = end_path_s;
             }
 
             bool too_close = false;
+
+            int lane = 0;
+            for(int i = 0; i < 3; i++) {
+                if(car_d < (2 + 4*i +2) && car_d > (2 + 4*i - 2)) {
+                    lane = i;
+                }
+            }
 
             for(int i = 0; i < sensor_fusion.size(); i++)
             {
