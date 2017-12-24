@@ -255,7 +255,9 @@ int main() {
             }
           }
 
-          bool too_close[3] = {false, false, false};
+          // examine the presence of a vehicle ahead and a vehicle behind
+          bool front_too_close[3] = {false, false, false};
+          bool back_too_close[3] = {false, false, false};
           int  next_lane = current_lane;
           for (int i = 0; i < sensor_fusion.size(); i++) {
             double d = sensor_fusion[i][6];
@@ -274,19 +276,31 @@ int main() {
             check_car_s += ((double)prev_size * .02 * check_speed);
 
             if (check_car_s > car_s && (check_car_s-car_s) < 30) {
-              too_close[check_car_lane] = true;
-              if (current_lane == check_car_lane && current_lane > 0) {
-                next_lane = 0;
-              }
+              front_too_close[check_car_lane] = true;
+            }
+            if ((check_car_s-car_s) < 5 && (check_car_s-car_s) > -15) {
+              back_too_close[check_car_lane] = true;
             }
           }
 
-          if (too_close[next_lane]) {
-            ref_val -= .224;
+          // "Presence / absence of change of lane, acceleration / deceleration" is judged
+          if (front_too_close[current_lane]) {
+            if(current_lane == 0 && !front_too_close[1] && !back_too_close[1]) {
+              next_lane = 1;
+            } else if(current_lane == 1 && !front_too_close[0] && !back_too_close[1]) {
+              next_lane = 0;
+            } else if(current_lane == 1 && !front_too_close[2] && !back_too_close[2]) {
+              next_lane = 2;
+            } else if(current_lane == 2 && !front_too_close[1] && !back_too_close[1]) {
+              next_lane = 1;
+            } else {
+              ref_val -= .224;
+            }
           } else if (ref_val < 49.5) {
             ref_val += .224;
           }
 
+          // create a list of widely spaced (x,y) waypoints
           vector<double> ptsx;
           vector<double> ptsy;
 
@@ -341,6 +355,7 @@ int main() {
           tk::spline s;
           s.set_points(ptsx, ptsy);
 
+          // Plan a path
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
