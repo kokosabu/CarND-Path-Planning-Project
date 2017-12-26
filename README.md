@@ -3,14 +3,36 @@ Self-Driving Car Engineer Nanodegree Program
 
 ## Reflection
 
+### Overview
 I followed the Project Walkthrough and Q&A video.
+In addition, when generating the trajectory,
+I confirmed forward and backward not only in front of the lane of the car but also in all lanes.
+
+### Details
+
+#### From line 251 to line 256 of main.cpp
+I examine the lane where I am. This can be estimated from the "d" of the vehicle and the width of the lane.
+
+#### From line 258 to line 284 of main.cpp
+For all lanes, check whether the vehicle in front and behind is close.
+The front is within 30 meters against the own vehicle and the rear is -15 to 5 meters for the own vehicle.
+Looking backwards to 5 meters ahead is concerned about the collision at lane change.
+
+#### From line 286 to line 301 of main.cpp
+Lane switching and determination of acceleration / deceleration are made.
+If there is a vehicle in front of the host vehicle but not in the other vehicle and it is judged that there is no collision from the rear at the time of lane switching,
+switching is made to the next lane.
+If switching is impossible, decelerate.
+If there is no vehicle ahead, accelerate.
+
+#### From lines 303 to 356 of main.cpp
 Based on latest car position taken from either,
 previously generated path or current car position,
 and 3 points in front of the car (at 30, 60, 90 meters distance); and also,
 I used the spline library model generated trajectory.
-To avoid jerks, point coordinates for next 30 meters were generated with respect to desired velocity.
-In addition, when generating the trajectory,
-I confirmed forward and backward not only in front of the lane of the car but also in all lanes.
+
+#### From line 359 to line 390 of main.cpp
+To avoid jerk, generate the next 30 meter point coordinates with respect to the desired velocity.
 
 *the description below is Udacity's original README for the project repo*
 
